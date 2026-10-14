@@ -7,14 +7,14 @@ import type { SectionId } from "@/utils/types";
 import CrewSection from "./CrewSection";
 import EmptySection from "./EmptySection";
 import EventDetails from "./EventDetails";
+import IngestSection from "./IngestSection";
 import Overview from "./Overview";
+import PricingSection from "./PricingSection";
+import ViewerAccess from "./ViewerAccess";
 
 const placeholders: Partial<Record<SectionId, string>> = {
-  ingest: "Add the stream key and ingest server your encoder will push to.",
   issues: "Stream failures and warnings during the broadcast will appear here.",
   activity: "A timeline of state changes and operational events.",
-  pricing: "Set the ticket price and capacity viewers will pay for.",
-  access: "See what ticket holders can do at each stage of the event.",
   refunds: "Review and resolve viewer refund requests.",
 };
 
@@ -22,6 +22,9 @@ const renderSection = (id: SectionId) => {
   if (id === "overview") return <Overview />;
   if (id === "details") return <EventDetails />;
   if (id === "crew") return <CrewSection />;
+  if (id === "ingest") return <IngestSection />;
+  if (id === "pricing") return <PricingSection />;
+  if (id === "access") return <ViewerAccess />;
   return <EmptySection text={placeholders[id] ?? ""} />;
 };
 

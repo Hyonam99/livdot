@@ -1,6 +1,4 @@
 import { createSelector } from "@reduxjs/toolkit";
-import { ingestData } from "@/constants/ingestData";
-import { ticketData } from "@/constants/ticketData";
 import { getActions, getChecks } from "@/utils/rules";
 import type { EventRecord, EventState, ReadinessFacts } from "@/utils/types";
 import type { RootState } from "./index";
@@ -22,20 +20,23 @@ export const selectEventCrew = createSelector(
   (assignments, id) => assignments.filter((item) => item.eventId === id),
 );
 
+export const selectTicket = (state: RootState, id: string) =>
+  state.tickets.find((item) => item.eventId === id);
+
+export const selectIngest = (state: RootState, id: string) =>
+  state.ingest.find((item) => item.eventId === id);
+
 export const selectFacts = createSelector(
-  [selectEventCrew, (_state: RootState, id: string) => id],
-  (crew, id): ReadinessFacts => {
-    const ticket = ticketData.find((item) => item.eventId === id);
-    return {
-      crew: {
-        accepted: crew.filter((item) => item.status === "accepted").length,
-        pending: crew.filter((item) => item.status === "pending").length,
-        declined: crew.filter((item) => item.status === "declined").length,
-      },
-      ingest: { configured: ingestData.some((item) => item.eventId === id) },
-      pricing: { price: ticket?.price ?? null, currency: ticket?.currency ?? "NGN" },
-    };
-  },
+  [selectEventCrew, selectTicket, selectIngest],
+  (crew, ticket, ingest): ReadinessFacts => ({
+    crew: {
+      accepted: crew.filter((item) => item.status === "accepted").length,
+      pending: crew.filter((item) => item.status === "pending").length,
+      declined: crew.filter((item) => item.status === "declined").length,
+    },
+    ingest: { configured: Boolean(ingest), connected: Boolean(ingest?.connected) },
+    pricing: { price: ticket?.price ?? null, currency: ticket?.currency ?? "NGN" },
+  }),
 );
 
 export const selectChecks = createSelector([selectFacts], getChecks);

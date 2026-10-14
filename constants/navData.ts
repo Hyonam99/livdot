@@ -5,7 +5,7 @@ export const hostName = "Bayo Events";
 
 export const tabs: { id: TabId; label: string }[] = [
   { id: "manage", label: "Management" },
-  { id: "sales", label: "Sales" },
+  { id: "viewers", label: "Viewers" },
 ];
 
 export const sections: {
@@ -18,11 +18,11 @@ export const sections: {
   { id: "details", label: "Event Details", tab: "manage" },
   { id: "crew", label: "Production Crew", tab: "manage", check: "crew" },
   { id: "ingest", label: "Streaming Ingest", tab: "manage", check: "ingest" },
+  { id: "pricing", label: "Ticket Pricing", tab: "manage", check: "pricing" },
   { id: "issues", label: "Stream Issues", tab: "manage" },
   { id: "activity", label: "Activity Log", tab: "manage" },
-  { id: "pricing", label: "Ticket Pricing", tab: "sales", check: "pricing" },
-  { id: "access", label: "Viewer Access", tab: "sales" },
-  { id: "refunds", label: "Refund Requests", tab: "sales" },
+  { id: "access", label: "Viewer Access", tab: "viewers" },
+  { id: "refunds", label: "Refund Requests", tab: "viewers" },
 ];
 
 export const findSection = (id: SectionId) =>

@@ -18,6 +18,24 @@ export const eventFormSchema = eventSchema.extend({
     ),
 });
 
+export const pricingSchema = (sold: number) =>
+  z.object({
+    price: z.coerce
+      .number()
+      .int("Use a whole amount.")
+      .min(100, "Price must be at least NGN 100.")
+      .max(1_000_000, "Price must be at most NGN 1,000,000."),
+    capacity: z.coerce
+      .number()
+      .int("Use a whole number.")
+      .min(
+        Math.max(1, sold),
+        sold > 0
+          ? `Capacity cannot be below the ${sold} tickets already sold.`
+          : "Capacity must be at least 1.",
+      ),
+  });
+
 export const getFieldErrors = (error: z.ZodError) =>
   Object.fromEntries(
     error.issues.map((issue) => [String(issue.path[0]), issue.message]),

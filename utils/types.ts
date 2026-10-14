@@ -38,7 +38,7 @@ export type Check = {
 
 export type ReadinessFacts = {
   crew: { accepted: number; pending: number; declined: number };
-  ingest: { configured: boolean };
+  ingest: { configured: boolean; connected: boolean };
   pricing: { price: number | null; currency: string };
 };
 
@@ -53,7 +53,7 @@ export type EventAction = {
   reasons: string[];
 };
 
-export type TabId = "manage" | "sales";
+export type TabId = "manage" | "viewers";
 
 export type SectionId =
   | "overview"
@@ -94,4 +94,6 @@ export type IngestInfo = {
   eventId: string;
   server: string;
   streamKey: string;
+  connected: boolean;
+  checking?: boolean;
 };

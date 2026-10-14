@@ -1,6 +1,6 @@
 "use client";
 
-import { Lock, UserPlus } from "lucide-react";
+import { UserPlus } from "lucide-react";
 import { useAppDispatch, useAppSelector } from "@/store";
 import { inviteCrew, removeCrew } from "@/store/crewSlice";
 import { selectCrewMembers, selectEventCrew } from "@/store/selectors";
@@ -10,6 +10,7 @@ import Card from "./Card";
 import CrewRow from "./CrewRow";
 import { useEvent } from "./EventContext";
 import InviteBadge from "./InviteBadge";
+import LockNotice from "./LockNotice";
 
 const removeLabels = { pending: "Cancel invite", accepted: "Remove", declined: "Remove" };
 
@@ -31,12 +32,7 @@ const CrewSection = () => {
         Invites stay pending until the crew member replies.
       </p>
 
-      {!editable && (
-        <p className="flex items-center gap-2 rounded-lg bg-zinc-50 p-3 text-sm text-zinc-600">
-          <Lock className="size-4" />
-          Crew is locked once the event is ready for streaming.
-        </p>
-      )}
+      {!editable && <LockNotice text="Crew is locked once the event is ready for streaming." />}
 
       <Card
         title="Assigned crew"

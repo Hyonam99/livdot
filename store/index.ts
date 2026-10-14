@@ -2,11 +2,15 @@ import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import { useDispatch, useSelector } from "react-redux";
 import crewReducer from "./crewSlice";
 import eventReducer from "./eventSlice";
+import ingestReducer from "./ingestSlice";
+import ticketReducer from "./ticketSlice";
 import uiReducer from "./uiSlice";
 
 const rootReducer = combineReducers({
   events: eventReducer,
   crew: crewReducer,
+  tickets: ticketReducer,
+  ingest: ingestReducer,
   ui: uiReducer,
 });
 

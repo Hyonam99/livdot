@@ -44,11 +44,13 @@ const crewCheck = ({ accepted, pending, declined }: ReadinessFacts["crew"]): Che
   return { ...base, status: "missing", detail: "No crew assigned" };
 };
 
-const ingestCheck = ({ configured }: ReadinessFacts["ingest"]): Check => {
+const ingestCheck = ({ configured, connected }: ReadinessFacts["ingest"]): Check => {
   const base = { id: "ingest", label: "Streaming ingest" } as const;
+  if (connected)
+    return { ...base, status: "done", detail: "Encoder signal received" };
   if (configured)
-    return { ...base, status: "done", detail: "Stream key and server set" };
-  return { ...base, status: "missing", detail: "Ingest not configured" };
+    return { ...base, status: "pending", detail: "Waiting for encoder signal" };
+  return { ...base, status: "missing", detail: "No stream key generated" };
 };
 
 const pricingCheck = ({ price, currency }: ReadinessFacts["pricing"]): Check => {
@@ -63,6 +65,21 @@ export const getChecks = (facts: ReadinessFacts): Check[] => [
   ingestCheck(facts.ingest),
   pricingCheck(facts.pricing),
 ];
+
+export const accessByState: Record<EventState, { title: string; detail: string }> = {
+  draft: { title: "Not on sale", detail: "The event is not public yet, so viewers cannot buy tickets." },
+  scheduled: { title: "Tickets on sale", detail: "Viewers can buy tickets and see when the stream starts." },
+  ready: { title: "Waiting room open", detail: "Ticket holders can join the waiting room before the stream starts." },
+  live: { title: "Watching live", detail: "Ticket holders can watch the live stream now." },
+  completed: { title: "Stream ended", detail: "Ticket holders are told a replay is being prepared." },
+  replay: { title: "Replay available", detail: "Ticket holders can watch the replay on demand." },
+};
+
+export const viewerAccess = (state: EventState, priced: boolean) => {
+  if (state === "scheduled" && !priced)
+    return { title: "Sales blocked", detail: "Set a ticket price to open ticket sales.", blocked: true };
+  return { ...accessByState[state], blocked: false };
+};
 
 const openChecks = (checks: Check[]) =>
   checks
