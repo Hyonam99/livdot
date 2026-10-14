@@ -37,7 +37,7 @@ export type Check = {
 };
 
 export type ReadinessFacts = {
-  crew: { accepted: number; pending: number };
+  crew: { accepted: number; pending: number; declined: number };
   ingest: { configured: boolean };
   pricing: { price: number | null; currency: string };
 };
@@ -66,18 +66,20 @@ export type SectionId =
   | "access"
   | "refunds";
 
-export type InviteStatus = "pending" | "accepted";
+export type InviteStatus = "pending" | "accepted" | "declined";
 
 export type CrewMember = {
   id: string;
   name: string;
   role: string;
+  declines?: boolean;
 };
 
 export type CrewAssignment = {
   eventId: string;
   memberId: string;
   status: InviteStatus;
+  requestId?: string;
 };
 
 export type TicketInfo = {

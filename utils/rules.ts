@@ -33,12 +33,14 @@ export const stateHints: Record<EventState, string> = {
 export const canEdit = (state: EventState) =>
   state === "draft" || state === "scheduled";
 
-const crewCheck = ({ accepted, pending }: ReadinessFacts["crew"]): Check => {
+const crewCheck = ({ accepted, pending, declined }: ReadinessFacts["crew"]): Check => {
   const base = { id: "crew", label: "Production crew" } as const;
   if (accepted > 0)
     return { ...base, status: "done", detail: `${accepted} crew confirmed` };
   if (pending > 0)
     return { ...base, status: "pending", detail: `${pending} invite(s) awaiting reply` };
+  if (declined > 0)
+    return { ...base, status: "missing", detail: "Invite declined, invite someone else" };
   return { ...base, status: "missing", detail: "No crew assigned" };
 };
 

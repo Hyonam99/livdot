@@ -9,3 +9,11 @@ export const formatDate = (value: string) =>
 
 export const formatMoney = (amount: number, currency: string) =>
   `${currency} ${amount.toLocaleString("en-US")}`;
+
+export const initials = (name: string) =>
+  name
+    .split(" ")
+    .map((part) => part[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
