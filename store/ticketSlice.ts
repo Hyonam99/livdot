@@ -1,5 +1,6 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import { ticketData } from "@/constants/ticketData";
+import { resolveRefund } from "./issueSlice";
 
 type PricingInput = { eventId: string; price: number; capacity: number };
 
@@ -12,6 +13,12 @@ const ticketSlice = createSlice({
       if (ticket) Object.assign(ticket, payload);
       else state.push({ ...payload, currency: "NGN", sold: 0 });
     },
+  },
+  extraReducers: (builder) => {
+    builder.addCase(resolveRefund.fulfilled, (state, { payload }) => {
+      const ticket = state.find((item) => item.eventId === payload.eventId);
+      if (ticket && payload.approve) ticket.sold = Math.max(0, ticket.sold - 1);
+    });
   },
 });
 

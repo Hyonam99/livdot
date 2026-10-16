@@ -38,7 +38,7 @@ export type Check = {
 
 export type ReadinessFacts = {
   crew: { accepted: number; pending: number; declined: number };
-  ingest: { configured: boolean; connected: boolean };
+  ingest: { configured: boolean; connected: boolean; lost: boolean };
   pricing: { price: number | null; currency: string };
 };
 
@@ -95,5 +95,38 @@ export type IngestInfo = {
   server: string;
   streamKey: string;
   connected: boolean;
+  lost?: boolean;
   checking?: boolean;
+};
+
+export type StreamIssue = {
+  id: string;
+  eventId: string;
+  message: string;
+  status: "open" | "resolved";
+  at: string;
+};
+
+export type RefundStatus = "pending" | "approved" | "denied";
+
+export type RefundRequest = {
+  id: string;
+  eventId: string;
+  viewer: string;
+  reason: string;
+  amount: number;
+  currency: string;
+  status: RefundStatus;
+  at: string;
+  processing?: boolean;
+};
+
+export type LogTone = "info" | "success" | "warn" | "error";
+
+export type LogEntry = {
+  id: string;
+  eventId: string;
+  text: string;
+  tone: LogTone;
+  at: string;
 };

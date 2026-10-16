@@ -4,9 +4,10 @@ import { useEffect } from "react";
 import Link from "next/link";
 import { useAppDispatch, useAppSelector } from "@/store";
 import { selectEventById } from "@/store/selectors";
-import { openSection } from "@/store/uiSlice";
+import { enterEvent } from "@/store/uiSlice";
 import { EventIdContext } from "./EventContext";
 import EventTitle from "./EventTitle";
+import IssueBanner from "./IssueBanner";
 import SectionNav from "./SectionNav";
 import SectionPanel from "./SectionPanel";
 import TabSwitch from "./TabSwitch";
@@ -16,7 +17,7 @@ const EventDashboard = ({ id }: { id: string }) => {
   const event = useAppSelector((state) => selectEventById(state, id));
 
   useEffect(() => {
-    dispatch(openSection("overview"));
+    dispatch(enterEvent(id));
   }, [dispatch, id]);
 
   if (!event)
@@ -35,6 +36,7 @@ const EventDashboard = ({ id }: { id: string }) => {
   return (
     <EventIdContext value={id}>
       <EventTitle />
+      <IssueBanner />
       <div className="mt-4">
         <TabSwitch />
       </div>

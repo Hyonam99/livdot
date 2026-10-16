@@ -3,14 +3,29 @@
 import { findSection, sections } from "@/constants/navData";
 import { checkLooks } from "@/constants/statusData";
 import { useAppDispatch, useAppSelector } from "@/store";
-import { selectSection } from "@/store/selectors";
+import { selectEventIssues, selectEventRefunds, selectSection } from "@/store/selectors";
 import { openSection } from "@/store/uiSlice";
-import { useChecks } from "./EventContext";
+import type { SectionId } from "@/utils/types";
+import { useChecks, useEventId } from "./EventContext";
+import Pill from "./Pill";
 
 const SectionNav = () => {
   const dispatch = useAppDispatch();
   const active = useAppSelector(selectSection);
   const checks = useChecks();
+  const id = useEventId();
+  const issues = useAppSelector((state) => selectEventIssues(state, id));
+  const refunds = useAppSelector((state) => selectEventRefunds(state, id));
+  const counts: Partial<Record<SectionId, { value: number; cls: string }>> = {
+    issues: {
+      value: issues.filter((item) => item.status === "open").length,
+      cls: "bg-red-600 text-white",
+    },
+    refunds: {
+      value: refunds.filter((item) => item.status === "pending").length,
+      cls: "bg-zinc-900 text-white",
+    },
+  };
   const tab = findSection(active).tab;
 
   return (
@@ -20,6 +35,7 @@ const SectionNav = () => {
         .map((section) => {
           const status = checks.find((check) => check.id === section.check)?.status;
           const isActive = section.id === active;
+          const count = counts[section.id];
 
           return (
             <button
@@ -31,6 +47,7 @@ const SectionNav = () => {
               }`}
             >
               {section.label}
+              {count && count.value > 0 && <Pill cls={count.cls}>{count.value}</Pill>}
               {status && (
                 <span
                   title={checkLooks[status].text}

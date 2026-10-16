@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice, nanoid, type PayloadAction } from "@reduxjs/toolkit";
 import { ingestData, ingestServer } from "@/constants/ingestData";
 import { wait } from "@/utils/wait";
+import { streamFailed } from "./actions";
 
 export const checkSignal = createAsyncThunk("ingest/checkSignal", (eventId: string) =>
   wait(2500).then(() => eventId),
@@ -31,7 +32,15 @@ const ingestSlice = createSlice({
         if (ingest?.checking) {
           ingest.checking = false;
           ingest.connected = true;
+          ingest.lost = false;
         }
+      })
+      .addCase(streamFailed, (state, { payload }) => {
+        const ingest = state.find((item) => item.eventId === payload.eventId);
+        if (!ingest) return;
+        ingest.connected = false;
+        ingest.checking = false;
+        ingest.lost = true;
       });
   },
 });

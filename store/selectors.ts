@@ -34,7 +34,11 @@ export const selectFacts = createSelector(
       pending: crew.filter((item) => item.status === "pending").length,
       declined: crew.filter((item) => item.status === "declined").length,
     },
-    ingest: { configured: Boolean(ingest), connected: Boolean(ingest?.connected) },
+    ingest: {
+      configured: Boolean(ingest),
+      connected: Boolean(ingest?.connected),
+      lost: Boolean(ingest?.lost),
+    },
     pricing: { price: ticket?.price ?? null, currency: ticket?.currency ?? "NGN" },
   }),
 );
@@ -69,4 +73,39 @@ export const selectFilteredEvents = createSelector(
           event.description.toLowerCase().includes(query)),
     );
   },
+);
+
+const byEvent = <T extends { eventId: string }>(items: T[], id: string) =>
+  items.filter((item) => item.eventId === id);
+
+export const selectEventIssues = createSelector(
+  [(state: RootState) => state.issues.issues, (_state: RootState, id: string) => id],
+  byEvent,
+);
+
+export const selectOpenIssue = createSelector([selectEventIssues], (issues) =>
+  issues.find((issue) => issue.status === "open"),
+);
+
+export const selectEventRefunds = createSelector(
+  [(state: RootState) => state.issues.refunds, (_state: RootState, id: string) => id],
+  byEvent,
+);
+
+export const selectEventLog = createSelector(
+  [(state: RootState) => state.log, (_state: RootState, id: string) => id],
+  byEvent,
+);
+
+export const selectPendingRefunds = createSelector(
+  [selectEvents, (state: RootState) => state.issues.refunds],
+  (events, refunds) =>
+    events
+      .map((event) => ({
+        id: event.id,
+        title: event.title,
+        count: refunds.filter((item) => item.eventId === event.id && item.status === "pending")
+          .length,
+      }))
+      .filter((item) => item.count > 0),
 );

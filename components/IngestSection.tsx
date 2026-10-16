@@ -28,7 +28,7 @@ const IngestSection = () => {
       </p>
 
       {!editable && (
-        <LockNotice text="Ingest settings are locked once the event is ready for streaming." />
+        <LockNotice text="The stream key is locked once the event is ready for streaming. You can still check the signal." />
       )}
 
       <Card
@@ -49,7 +49,7 @@ const IngestSection = () => {
           <div className="space-y-4">
             <CopyField label="Server URL" value={ingest.server} />
             <CopyField label="Stream key" value={ingest.streamKey} secret />
-            {editable && (
+            {(editable || !ingest.connected) && (
               <div className="flex flex-wrap gap-2">
                 {!ingest.connected && (
                   <Button
@@ -64,10 +64,12 @@ const IngestSection = () => {
                     {ingest.checking ? "Checking signal…" : "Check signal"}
                   </Button>
                 )}
-                <Button variant="secondary" onClick={() => dispatch(generateKey(event.id))}>
-                  <RefreshCw className="size-4" />
-                  Regenerate key
-                </Button>
+                {editable && (
+                  <Button variant="secondary" onClick={() => dispatch(generateKey(event.id))}>
+                    <RefreshCw className="size-4" />
+                    Regenerate key
+                  </Button>
+                )}
               </div>
             )}
             {editable && ingest.connected && (

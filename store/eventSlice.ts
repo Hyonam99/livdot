@@ -9,6 +9,7 @@ import { eventData } from "@/constants/eventData";
 import { findTransition } from "@/utils/rules";
 import { wait } from "@/utils/wait";
 import type { ActionId, EventDetails, EventRecord, EventState } from "@/utils/types";
+import { streamFailed } from "./actions";
 import type { RootState } from "./index";
 import { selectActions } from "./selectors";
 
@@ -83,6 +84,10 @@ const eventSlice = createSlice({
       })
       .addCase(processReplay.fulfilled, (state, { payload }) => {
         state.entities[payload].replay = "ready";
+      })
+      .addCase(streamFailed, (state, { payload }) => {
+        const event = state.entities[payload.eventId];
+        if (event?.state === "ready") event.state = "scheduled";
       });
   },
 });

@@ -44,8 +44,10 @@ const crewCheck = ({ accepted, pending, declined }: ReadinessFacts["crew"]): Che
   return { ...base, status: "missing", detail: "No crew assigned" };
 };
 
-const ingestCheck = ({ configured, connected }: ReadinessFacts["ingest"]): Check => {
+const ingestCheck = ({ configured, connected, lost }: ReadinessFacts["ingest"]): Check => {
   const base = { id: "ingest", label: "Streaming ingest" } as const;
+  if (lost)
+    return { ...base, status: "missing", detail: "Encoder signal lost" };
   if (connected)
     return { ...base, status: "done", detail: "Encoder signal received" };
   if (configured)
@@ -161,7 +163,8 @@ export const getActions = (event: EventInfo, checks: Check[]): EventAction[] =>
     });
 
 export const progressNote = (event: EventInfo, checks: Check[]) => {
-  if (event.state === "live") return "Broadcasting now";
+  if (event.state === "live")
+    return checks.every((check) => check.status === "done") ? "Broadcasting now" : "Stream degraded";
   if (event.state === "replay") return "Replay available to viewers";
   if (event.state === "completed")
     return event.replay === "ready" ? "Replay processed" : "Replay processing";
